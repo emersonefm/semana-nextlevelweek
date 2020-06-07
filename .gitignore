@@ -1,0 +1,47 @@
+/server/src/database/database.sqlite
+
+# macOS
+/mobile/.DS_Store
+
+# dependencies
+/server/node_modules
+
+/mobile/node_modules
+/mobile/.expo
+
+/web/node_modules
+/web/.pnp
+/web/.pnp.js
+
+# testing
+/web/coverage
+
+# production
+/web/build
+
+/mobile/web-build/
+/mobile/web-report/
+
+# misc
+/web/.DS_Store
+/web/.env.local
+/web/.env.development.local
+/web/.env.test.local
+/web/.env.production.local
+
+/web/npm-debug.log*
+/web/yarn-debug.log*
+/web/yarn-error.log*
+
+/server/npm-debug.log*
+/server/yarn-debug.log*
+/server/yarn-error.log*
+
+/mobile/yarn-error.log*
+/mobile/npm-debug.*
+/mobile/*.jks
+/mobile/*.p8
+/mobile/*.p12
+/mobile/*.key
+/mobile/*.mobileprovision
+/mobile/*.orig.
