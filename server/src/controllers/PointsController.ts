@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
 import knex from '../database/connection';
 
-class PointsContoller {
+class PointsController {
   async index(request: Request, response: Response) {
     const { city, uf, items } = request.query;
-
     const parsedItems = String(items)
       .split(',')
       .map(item => Number(item.trim()));
@@ -17,25 +16,34 @@ class PointsContoller {
       .distinct()
       .select('points.*');
 
-    return response.json(points);
+    const serializedPoints = points.map(point => {
+      return {
+        ...point,
+        image_url: `http://192.168.0.108:3333/uploads/${point.image}`,
+      }
+    });
+
+    return response.json(serializedPoints);
   }
 
   async show(request: Request, response: Response) {
-    const id = request.params.id;
+    const { id } = request.params;
     const point = await knex('points').where('id', id).first();
-
     if (!point) {
-      return response.status(400).json({ message: "Point not found." })
+      return response.status(400).json({ message: 'Point not found. ' });
     }
 
-    const items = await knex('items').join('point_items', 'items.id', '=', 'point_items.item_id')
-      .where('point_items.point_id', id).select('items.title');
+    const serializedPoint = {
+      ...point,
+      image_url: `http://192.168.0.108:3333/uploads/${point.image}`,
+    };
 
+    const items = await knex('items')
+      .join('point_items', 'items.id', '=', 'point_items.item_id')
+      .where('point_items.point_id', id)
+      .select('items.title');
+    return response.json({ point: serializedPoint, items });
 
-    return response.json({
-      point,
-      items
-    });
   }
 
   async create(request: Request, response: Response) {
@@ -53,7 +61,8 @@ class PointsContoller {
     const trx = await knex.transaction();
 
     const point = {
-      image: 'https://images.unsplash.com/photo-1556767576-5ec41e3239ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60', name,
+      image: request.file.filename,
+      name,
       email,
       whatsapp,
       latitude,
@@ -65,21 +74,23 @@ class PointsContoller {
     const insertedIds = await trx('points').insert(point);
 
     const point_id = insertedIds[0];
-    const pointItems = items.map((item_id: number) => {
-      return {
-        item_id,
-        point_id,
-      }
-    });
+    const pointItems = items
+      .split(',')
+      .map((item: string) => Number(item.trim()))
+      .map((item_id: number) => {
+        return {
+          item_id,
+          point_id,
+        }
+      });
     await trx('point_items').insert(pointItems);
 
     await trx.commit();
-
     return response.json({
       id: point_id,
       ...point,
     })
   }
-};
+}
 
-export default PointsContoller;
+export default PointsController;
