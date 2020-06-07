@@ -1,0 +1,31 @@
+1 - criando o projeto backend
+ dentro da pasta server no terminal: 
+    npm init -y
+    npm install express
+
+2 - Criação de Banco de Dados
+
+npx knex migrate:latest --knexfile knexfile.ts
+ctrl + shift + p sqlite open database
+rodar a migrate novamente para criar o banco: npm run knex:migrate (foi add no package.json)
+
+3 - Executar seeds
+npm run knex:seed (foi add no package.json)
+
+4 - Executar aplicação back-end
+yarn dev
+
+5 - Executar aplicação web
+npm start
+
+6 - Criar aplicação mobile usando expo
+expo init mobile
+
+7 - Executar aplicação mobile
+npm start
+
+8 - Executar 
+
+
+
+
